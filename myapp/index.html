@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>jQuery API Call and Display Data Example</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+      table,
+      th,
+      td {
+        border: 1px solid black;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding: 5px;
+        text-align: left;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>jQuery API Call and Display Data Example</h1>
+    <button id="api-call-button">Call API</button>
+
+    <table id="api-data-table">
+      <thead>
+        <tr>
+          <th>userId</th>
+          <th>id</th>
+          <th>title</th>
+          <th>body</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <script>
+      const apiUrl = "http://localhost:4000/api/posts";
+
+      http: function createTableRow(data) {
+        return `<tr>
+                <td>${data.userId}</td>
+                <td>${data.id}</td>
+                <td>${data.title}</td>
+                <td>${data.body}</td>
+              </tr>`;
+      }
+
+      // Set up the API call using jQuery's $.ajax() method
+      function callApi() {
+        $.ajax({
+          url: apiUrl,
+          type: "GET",
+          dataType: "json",
+          success: function (data) {
+            // Handle the successful API response here
+            console.log("API call succeeded. Data received:", data);
+            let tableRows = "";
+            data.forEach((item) => {
+              tableRows += createTableRow(item);
+            });
+            $("#api-data-table tbody").html(tableRows);
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            // Handle the error response here
+            console.error(
+              "API call failed. Status:",
+              textStatus,
+              "Error:",
+              errorThrown
+            );
+          },
+        });
+      }
+
+      // Bind the 'click' event of the button to the 'callApi' function
+      $("#api-call-button").on("click", callApi);
+    </script>
+    <br />
+    <br /><br /><br /><br /><br /><br />
+    <!-- <form id="myForm">
+      <label for="name">title:</label>
+      <input type="text" id="name" name="name" /><br />
+      <label for="body">body:</label>
+      <input type="text" id="email" name="email" /><br />
+      <label for="userId">userId:</label>
+      <input type="number" id="email" name="email" /><br />
+      <input type="submit" value="Submit" />
+    </form> -->
+
+    <h1>Create a New Post</h1>
+    <form id="submitForm">
+      <label for="userId">User ID:</label>
+      <input type="number" id="userId" name="userId" required />
+      <br />
+      <label for="id">Post ID:</label>
+      <input type="number" id="id" name="id" required />
+      <br />
+      <label for="title">Title:</label>
+      <input type="text" id="title" name="title" required />
+      <br />
+      <label for="body">Body:</label>
+      <textarea id="body" name="body" required></textarea>
+      <br />
+      <input type="submit" value="Submit" />
+    </form>
+  </body>
+
+  <script>
+    $(document).ready(function () {
+      $("#submitForm").on("submit", function (event) {
+        event.preventDefault();
+        var formData = {
+          userId: $("#userId").val(),
+          id: $("#id").val(),
+          title: $("#title").val(),
+          body: $("#body").val(),
+        };
+        $.ajax({
+          url: "http://localhost:4000/api/posts",
+          method: "POST",
+          data: JSON.stringify(formData),
+          contentType: "application/json",
+          success: function (response) {
+            console.log("Post created:", response);
+            alert("Post created!");
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            console.error("Error creating post:", textStatus, errorThrown);
+            alert("Error creating post. Please try again later.");
+          },
+        });
+      });
+    });
+  </script>
+
+  <!-- <script>
+    $(document).ready(function () {
+      $("#myForm").submit(function (event) {
+        event.preventDefault();
+        var formData = $("#myForm").serialize();
+        $.ajax({
+          type: "POST",
+          url: "https://jsonplaceholder.typicode.com/posts",
+          data: formData,
+          success: function (response) {
+            console.log(response);
+          },
+          error: function (xhr, status, error) {
+            console.log(xhr.responseText);
+          },
+        });
+      });
+    });
+  </script> -->
+</html>
